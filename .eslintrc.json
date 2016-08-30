@@ -26,9 +26,9 @@
             "error",
             "unix"
         ],
-        "no-unused-vars": "error",
+        "no-unused-vars": "warn",
         "eqeqeq": "error",
-        "no-undef": "error",
+        "no-undef": "warn",
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
         "react/jsx-no-undef": "error"
