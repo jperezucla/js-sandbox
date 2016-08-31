@@ -11,8 +11,8 @@
         context,
         guidesCanvas,
         guidesContext,
-        width = 800,
-        height = 800,
+        width = 600,
+        height = 600,
         status,
         prevX = 0,
         prevY = 0,
@@ -20,14 +20,15 @@
         lightBlue = '#88ccff',
         tango = '#ff4400',
         draggingAnchor = null,
+        balloon_radius = 45,
 
         snapOffset = { x: 0, y: 0 },
 
         snapGrid = {
-            x: 10,
-            y: 10,
-            range: 10,
-            offset: { x: 0, y: 0 }
+            x: 225,
+            y: 225,
+            range: -1,
+            offset: { x: 75, y: 75 }
         },
         gridFunc = interact.createSnapGrid(snapGrid),
         anchors = [
@@ -123,6 +124,7 @@
     function circle (x, y, radius, color) {
         this.fillStyle = color || this.fillStyle;
         this.beginPath();
+
         this.arc(x, y, radius, 0, 2*Math.PI);
 
         return this;
@@ -138,7 +140,7 @@
             context.circle(snap.x, snap.y, snap.range + 1, 'rgba(102, 225, 117, 0.8)').fill();
         }
 
-        context.circle(event.pageX, event.pageY, 10, tango).fill();
+        context.circle(event.pageX, event.pageY, balloon_radius, tango).fill();
 
         prevX = event.pageX;
         prevY = event.pageY;
@@ -146,7 +148,7 @@
 
     function dragEnd (event) {
         context.clearRect(0, 0, width, height);
-        context.circle(event.pageX, event.pageY, 10, tango).fill();
+        context.circle(event.pageX, event.pageY, balloon_radius, tango).fill();
 
         prevX = event.pageX;
         prevY = event.pageY;
@@ -194,8 +196,21 @@
         drawSnap(interact(canvas).draggable().snap);
     }
 
-    function modeChange (event) {
-        var snap = interact(canvas).draggable().snap;
+    function init()
+    {
+        snapGrid.x = Number(status.gridX.value);
+        snapGrid.y = Number(status.gridY.value);
+        snapGrid.range = Number(status.range.value);
+
+        snapGrid.offset.x = Number(status.offsetX.value);
+        snapGrid.offset.y = Number(status.offsetY.value);
+
+        if (snapGrid.range < 0) {
+            snapGrid.range = Infinity;
+        }
+
+        //drawSnap(interact(canvas).draggable().snap);
+/*        var snap = interact(canvas).draggable().snap;
 
         if (status.anchorDrag.checked && !status.anchorMode.checked) {
             status.anchorMode.checked = true;
@@ -213,18 +228,18 @@
                 .on('dragmove', anchorDragMove)
                 .on('dragend', anchorDragEnd);
         }
-        else {
-            status.anchorMode.disabled = status.offMode.disabled = status.gridMode.disabled = false;
-            status.modes.className = status.modes.className.replace(/ *\<disabled\>/g, '');
+        else {*/
+        status.anchorMode.disabled = status.offMode.disabled = status.gridMode.disabled = false;
+        status.modes.className = status.modes.className.replace(/ *\<disabled\>/g, '');
 
-            interact(canvas)
-                .on('dragstart', dragMove)
-                .on('dragmove', dragMove)
-                .on('dragend', dragEnd)
-                .off('dragstart', anchorDragStart)
-                .off('dragmove', anchorDragMove)
-                .off('dragend', anchorDragEnd);
-        }
+        interact(canvas)
+            .on('dragstart', dragMove)
+            .on('dragmove', dragMove)
+            .on('dragend', dragEnd)
+            .off('dragstart', anchorDragStart)
+            .off('dragmove', anchorDragMove)
+            .off('dragend', anchorDragEnd);
+        //}
 
         interact(canvas)
             .draggable({
@@ -247,7 +262,7 @@
         drawSnap(interact(canvas).draggable().snap);
     }
 
-    function sliderInput (event) {
+/*    function sliderInput (event) {
         if (event.target.type === 'range' &&
             (Number(event.target.value) > Number(event.target.max)) ||
             Number(event.target.value) < Number(event.target.min)) {
@@ -256,7 +271,7 @@
         }
 
         sliderChange(event, true);
-    }
+    }*/
 
     interact(document).on('DOMContentLoaded', function () {
         canvas = document.getElementById('drag');
@@ -309,15 +324,15 @@
             relative: document.getElementById('relative')
         };
 
-        interact(status.sliders)
+/*        interact(status.sliders)
             .on('change', sliderChange)
             .on('input', sliderInput);
 
         interact(document.getElementById('modes'))
-            .on('change', modeChange);
+            .on('change', modeChange);*/
 
         sliderChange(null, true);
-        modeChange();
+        init();
     });
 
     window.grid = {
