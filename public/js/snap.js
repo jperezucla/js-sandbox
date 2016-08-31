@@ -139,14 +139,7 @@
         context.clearRect(0, 0, width, height);
         guidesContext.clearRect(0, 0, width, height);
 
-        if (status.gridMode.checked)
-        {
-            drawGrid(snapGrid, snapGrid.offset, snapGrid.range);
-        }
-        else if (status.anchorMode.checked)
-        {
-            drawAnchors(anchors, snap.range);
-        }
+        drawGrid(snapGrid, snapGrid.offset, snapGrid.range);
     }
 
     function circle(x, y, radius, color)
@@ -222,7 +215,6 @@
 
     function init()
     {
-        status.anchorMode.disabled = status.offMode.disabled = status.gridMode.disabled = false;
         status.modes.className = status.modes.className.replace(/ *\<disabled\>/g, '');
 
         interact(canvas)
@@ -240,8 +232,8 @@
                   zeroResumeDelta: false
                 },
                 snap: {
-                    targets: status.gridMode.checked? [gridFunc] : status.anchorMode.checked? anchors : null,
-                    enabled: !status.offMode.checked,
+                    targets: [gridFunc],
+                    enabled: true,
                     endOnly: status.endOnly.checked,
                     offset: status.relative.checked? 'startCoords' : null
                 }
@@ -255,7 +247,7 @@
         drawSnap(interact(canvas).draggable().snap);
     }
 
-    interact(document).on('DOMContentLoaded', function ()
+    interact(document).on('DOMContentLoaded', function()
     {
         canvas = document.getElementById('drag');
         canvas.width = width;
@@ -292,9 +284,6 @@
         status = {
             container: document.getElementById('status'),
             modes: document.getElementById('modes'),
-            offMode: document.getElementById('off-mode'),
-            gridMode: document.getElementById('grid-mode'),
-            anchorMode: document.getElementById('anchor-mode'),
             anchorDrag: document.getElementById('drag-anchors'),
             endOnly: document.getElementById('end-only'),
             inertia: document.getElementById('inertia'),
