@@ -8,7 +8,6 @@
     var guidesContext;
     var width = 600;
     var height = 600;
-    var status;
     var prevX = 0;
     var prevY = 0;
     var blue = '#2299ee';
@@ -215,8 +214,6 @@
 
     function init()
     {
-        status.modes.className = status.modes.className.replace(/ *\<disabled\>/g, '');
-
         interact(canvas)
             .on('dragstart', dragMove)
             .on('dragmove', dragMove)
@@ -228,21 +225,18 @@
         interact(canvas)
             .draggable({
                 inertia: {
-                  enabled: status.inertia.checked,
+                  enabled: true,
                   zeroResumeDelta: false
                 },
                 snap: {
                     targets: [gridFunc],
                     enabled: true,
-                    endOnly: status.endOnly.checked,
-                    offset: status.relative.checked? 'startCoords' : null
+                    endOnly: true,
+                    offset: null
                 }
             });
 
-        if (!status.relative.checked)
-        {
-            snapOffset.x = snapOffset.y = 0;
-        }
+        snapOffset.x = snapOffset.y = 0;
 
         drawSnap(interact(canvas).draggable().snap);
     }
@@ -261,18 +255,6 @@
                     restriction: 'self'
                 }
             })
-            .on('move down', function(event)
-            {
-                if ((event.type === 'down' || !event.interaction.pointerIsDown) && status.relative.checked)
-                {
-                    var rect = interact.getElementRect(canvas);
-
-                    snapOffset.x = event.pageX - rect.left;
-                    snapOffset.y = event.pageY - rect.top;
-
-                    drawSnap(interact(canvas).draggable().snap);
-                }
-            })
             .origin('self')
             .draggable(true);
 
@@ -280,15 +262,6 @@
         guidesCanvas.width = width;
         guidesCanvas.height = height;
         guidesContext = guidesCanvas.getContext('2d');
-
-        status = {
-            container: document.getElementById('status'),
-            modes: document.getElementById('modes'),
-            anchorDrag: document.getElementById('drag-anchors'),
-            endOnly: document.getElementById('end-only'),
-            inertia: document.getElementById('inertia'),
-            relative: document.getElementById('relative')
-        };
 
         init();
     });
