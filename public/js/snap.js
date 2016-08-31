@@ -15,7 +15,7 @@
     var lightBlue = '#88ccff';
     var tango = '#ff4400';
     var draggingAnchor = null;
-    var balloon_radius = 45;
+    var balloon_radius = 60;
 
     var snapOffset = {
         x: 0,
@@ -25,7 +25,7 @@
     var snapGrid = {
         x: 225,
         y: 225,
-        range: -1,
+        range: Infinity,
         offset: { x: 75, y: 75 }
     };
 
@@ -211,46 +211,17 @@
 
     function anchorDragEnd(event)
     {
-        interact(canvas).draggable({ snap: { enabled: true } });
+        interact(canvas).draggable({
+            snap: {
+                enabled: true
+            }
+        });
+
         draggingAnchor = null;
-    }
-
-    function sliderChange(event, valid)
-    {
-        if (!valid)
-        {
-            return;
-        }
-
-        snapGrid.x = Number(status.gridX.value);
-        snapGrid.y = Number(status.gridY.value);
-        snapGrid.range = Number(status.range.value);
-
-        snapGrid.offset.x = Number(status.offsetX.value);
-        snapGrid.offset.y = Number(status.offsetY.value);
-
-        if (snapGrid.range < 0)
-        {
-            snapGrid.range = Infinity;
-        }
-
-        drawSnap(interact(canvas).draggable().snap);
     }
 
     function init()
     {
-        snapGrid.x = Number(status.gridX.value);
-        snapGrid.y = Number(status.gridY.value);
-        snapGrid.range = Number(status.range.value);
-
-        snapGrid.offset.x = Number(status.offsetX.value);
-        snapGrid.offset.y = Number(status.offsetY.value);
-
-        if (snapGrid.range < 0)
-        {
-            snapGrid.range = Infinity;
-        }
-
         status.anchorMode.disabled = status.offMode.disabled = status.gridMode.disabled = false;
         status.modes.className = status.modes.className.replace(/ *\<disabled\>/g, '');
 
@@ -320,14 +291,6 @@
 
         status = {
             container: document.getElementById('status'),
-
-            sliders: document.getElementById('sliders'),
-            gridX: document.getElementById('grid-x'),
-            gridY: document.getElementById('grid-y'),
-            offsetX: document.getElementById('offset-x'),
-            offsetY: document.getElementById('offset-y'),
-            range: document.getElementById('snap-range'),
-
             modes: document.getElementById('modes'),
             offMode: document.getElementById('off-mode'),
             gridMode: document.getElementById('grid-mode'),
@@ -338,7 +301,6 @@
             relative: document.getElementById('relative')
         };
 
-        sliderChange(null, true);
         init();
     });
 
