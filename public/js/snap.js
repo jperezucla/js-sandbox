@@ -117,8 +117,6 @@
             .on('dragstart', dragMove)
             .on('dragmove', dragMove)
             .on('dragend', dragEnd)
-
-        interact(canvas)
             .draggable({
                 inertia: {
                   enabled: true,
