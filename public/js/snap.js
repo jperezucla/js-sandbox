@@ -8,12 +8,9 @@
     var guidesContext;
     var width = 600;
     var height = 600;
-    var prevX = 0;
-    var prevY = 0;
     var blue = '#2299ee';
     var lightBlue = '#88ccff';
     var tango = '#ff4400';
-    var draggingAnchor = null;
     var balloon_radius = 60;
 
     var snapOffset = {
@@ -29,28 +26,6 @@
     };
 
     var gridFunc = interact.createSnapGrid(snapGrid);
-    var anchors = [
-        {
-            x: 100,
-            y: 100,
-            range: 200
-        },
-        {
-            x: 600,
-            y: 400,
-            range: Infinity
-        },
-        {
-            x: 500,
-            y: 150,
-            range: Infinity
-        },
-        {
-            x: 250,
-            y: 250,
-            range: Infinity
-        }
-    ];
 
     function drawGrid(grid, gridOffset, range)
     {
@@ -96,43 +71,6 @@
         }
     }
 
-    function drawAnchors(anchors, defaultRange)
-    {
-        var barLength = 16;
- 
-        guidesContext.clearRect(0, 0, width, height);
-
-        if (range < 0 && range !== Infinity)
-        {
-            guidesContext.fillStyle = lightBlue;
-            guidesContext.fillRect(0, 0, width, height);
-        }
-
-        for (var i = 0, len = anchors.length; i < len; i++)
-        {
-            var anchor = {
-                x: anchors[i].x + snapOffset.x,
-                y: anchors[i].y + snapOffset.y,
-                range: anchors[i].range
-            }
-            var range = typeof anchor.range === 'number'? anchor.range: defaultRange;
-
-            if (range > 0 && range !== Infinity) {
-                guidesContext.circle(anchor.x, anchor.y, range, blue).fill();
-            }
-
-            guidesContext.beginPath();
-            guidesContext.moveTo(anchor.x, anchor.y - barLength / 2);
-            guidesContext.lineTo(anchor.x, anchor.y + barLength / 2);
-            guidesContext.stroke();
-
-            guidesContext.beginPath();
-            guidesContext.moveTo(anchor.x - barLength / 2, anchor.y);
-            guidesContext.lineTo(anchor.x + barLength / 2, anchor.y);
-            guidesContext.stroke();
-        }
-    }
-
     function drawSnap(snap)
     {
         context.clearRect(0, 0, width, height);
@@ -165,51 +103,12 @@
         }
 
         context.circle(event.pageX, event.pageY, balloon_radius, tango).fill();
-
-        prevX = event.pageX;
-        prevY = event.pageY;
     }
 
     function dragEnd(event)
     {
         context.clearRect(0, 0, width, height);
         context.circle(event.pageX, event.pageY, balloon_radius, tango).fill();
-
-        prevX = event.pageX;
-        prevY = event.pageY;
-    }
-
-    function anchorDragStart(event)
-    {
-        if (event.snap.locked)
-        {
-            interact(canvas).snap(false);
-            draggingAnchor = event.snap.anchors.closest;
-        }
-    }
-
-    function anchorDragMove(event)
-    {
-        if (draggingAnchor)
-        {
-            var snap = interact(canvas).snap().drag;
-
-            draggingAnchor.x += event.dx;
-            draggingAnchor.y += event.dy;
-
-            drawAnchors(anchors, snap.range);
-        }
-    }
-
-    function anchorDragEnd(event)
-    {
-        interact(canvas).draggable({
-            snap: {
-                enabled: true
-            }
-        });
-
-        draggingAnchor = null;
     }
 
     function init()
@@ -218,9 +117,6 @@
             .on('dragstart', dragMove)
             .on('dragmove', dragMove)
             .on('dragend', dragEnd)
-            .off('dragstart', anchorDragStart)
-            .off('dragmove', anchorDragMove)
-            .off('dragend', anchorDragEnd);
 
         interact(canvas)
             .draggable({
